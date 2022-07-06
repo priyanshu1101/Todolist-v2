@@ -13,7 +13,11 @@
 
     <h3>List of tasks:</h3>
     <ul>
-        <li><%= itemlist %></li>
+        <% for(var i=0;i<itemlist.length;i++){ %>
+            <li>
+                <%= itemlist[i] %>
+            </li>
+        <% } %>
     </ul>
     <form action="/" method="post">
         <label for="item">Enter the item:</label>
