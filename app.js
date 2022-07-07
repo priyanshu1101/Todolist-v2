@@ -1,7 +1,10 @@
 const bodyParser = require('body-parser');
-const express=require('express')
+const express=require('express');
+const date = require(__dirname+"/date.js"); //Custom module
+
 const app=express();
 const port=3000;
+const today=date.getDate();
 
 app.set('view engine', 'ejs');
 
@@ -9,14 +12,12 @@ app.use(bodyParser.urlencoded({extended : true}))
 app.use(express.static("public"));
 
 
-const options = { day: 'numeric', month: 'long', weekday: 'long', year: 'numeric'};
-var date=new Date();
 var items=[];
 var workitems=[];
 
 app.get('/',function(req,res)
 {
-    res.render('list',{list_heading:date.toLocaleDateString('en-us',options),itemlist:items});
+    res.render('list',{list_heading:today,itemlist:items});
 })
 
 app.post('/',function(req,res)
