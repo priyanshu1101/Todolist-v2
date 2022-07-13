@@ -30,7 +30,8 @@ const listSchema = {
 const list = mongoose.model("list", listSchema);
 
 
-const port = 3000;
+// const port = 3000; //For local system
+const port=process.env.PORT; //For Heroku
 const today = ""+date.getDate();
 
 
