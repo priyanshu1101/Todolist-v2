@@ -30,8 +30,8 @@ const listSchema = {
 const list = mongoose.model("list", listSchema);
 
 
-// const port = 3000; //For local system
-const port=process.env.PORT; //For Heroku
+const port = 3000; //For local system
+// const port=process.env.PORT; //For Heroku
 const today = ""+date.getDate();
 
 
@@ -130,6 +130,22 @@ app.post('/delete/:listname', function (req, res) {
                 {
                     console.log(err);
                 }
+                list.findOne({listname: listname},function(err,data)
+                {
+                    if(data)
+                    {
+                        if(data.items.length==0)
+                        {
+                            list.deleteOne({listname:listname},function(err,data)
+                            {
+                                if(err)
+                                {
+                                    console.log(err);
+                                }
+                            })
+                        }
+                    }
+                })
             }
         );
         res.redirect("/"+listname);
