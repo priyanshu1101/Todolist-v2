@@ -27,15 +27,15 @@ const listSchema = {
     items: [taskSchema]
 };
 
-const list = mongoose.model("list", listSchema);
+const list = mongoose.model("list", listSchema); //list-name of the collection
 
 
 // const port = 3000; //For local system
 const port=process.env.PORT; //For Heroku
-const today = ""+date.getDate();
 
 
 app.get('/', function (req, res) {
+    const today = ""+date.getDate();
     task.find({},function (err, data) {
         res.render('list', { list_heading: today, itemlist: data });
     });
@@ -60,6 +60,7 @@ app.get('/', function (req, res) {
 // })
 
 app.get('/:listname', function (req, res) {
+    const today = ""+date.getDate();
     if (req.params.listname == today) {
         res.redirect('/');
     }
@@ -77,6 +78,7 @@ app.get('/:listname', function (req, res) {
 })
 
 app.post('/:listname', function (req, res) {
+    const today = ""+date.getDate();
     var listname = req.params.listname;
     if (listname == today) {
         if (req.body.item.trim() != "") {
@@ -115,6 +117,7 @@ app.post('/:listname', function (req, res) {
 })
 
 app.post('/delete/:listname', function (req, res) {
+    const today = ""+date.getDate();
     if (req.params.listname == today) {
         task.deleteOne({ _id: req.body.task }, function (err) {
             if (err)
@@ -152,7 +155,7 @@ app.post('/delete/:listname', function (req, res) {
     }
 })
 
-app.listen(port)
+app.listen(port || 3000)
 {
     console.log("Listening to port :" + port);
 }
