@@ -37,7 +37,10 @@ const port=process.env.PORT; //For Heroku
 app.get('/', function (req, res) {
     const today = ""+date.getDate();
     task.find({},function (err, data) {
-        res.render('list', { list_heading: today, itemlist: data });
+        if(!err)
+        {
+            res.render('list', { list_heading: today, itemlist: data });
+        }
     });
 })
 
@@ -85,9 +88,15 @@ app.post('/:listname', function (req, res) {
             const taskitem = new task({
                 task: req.body.item.trim()
             });
-            taskitem.save();
+            taskitem.save(function(err)
+            {
+                if(!err)
+                {
+                    console.log("Hello");
+                    res.redirect("/");
+                }
+            });
         }
-        res.redirect("/");
     }
     else {
         listname=_.lowerCase(listname);
@@ -101,18 +110,24 @@ app.post('/:listname', function (req, res) {
                         listName: listname,
                         items: [item]
                     })
-                    listitem.save();
+                    listitem.save(function(err)
+                    {
+                        if(!err)
+                        {
+                            res.redirect('/' + listname);
+                        }
+                    });
                 }
                 else {
                     list.updateOne({ listName: listname }, { $push: { items: item } }, function (err, data) {
-                        if (err) {
-                            console.log(err);
+                        if (!err) {
+                            res.redirect('/' + listname);
                         }
                     })
                 }
             }
         })
-        res.redirect('/' + listname);
+        
     }
 })
 
@@ -120,19 +135,18 @@ app.post('/delete/:listname', function (req, res) {
     const today = ""+date.getDate();
     if (req.params.listname == today) {
         task.deleteOne({ _id: req.body.task }, function (err) {
-            if (err)
-                console.log(err);
+            if (!err)
+            {
+                res.redirect("/");
+            }
         })
-        res.redirect("/");
     }
     else {
         const listname=_.lowerCase(req.params.listname);
         list.updateOne({ listName: listname },{ $pull: { items: { _id: req.body.task } } },function(err,data)
             {
-                if(err)
+                if(!err)
                 {
-                    console.log(err);
-                }
                 list.findOne({listname: listname},function(err,data)
                 {
                     if(data)
@@ -141,17 +155,21 @@ app.post('/delete/:listname', function (req, res) {
                         {
                             list.deleteOne({listname:listname},function(err,data)
                             {
-                                if(err)
+                                if(!err)
                                 {
-                                    console.log(err);
+                                    res.redirect("/"+listname);
                                 }
                             })
+                        }
+                        else
+                        {
+                            res.redirect("/"+listname);
                         }
                     }
                 })
             }
+            }
         );
-        res.redirect("/"+listname);
     }
 })
 
