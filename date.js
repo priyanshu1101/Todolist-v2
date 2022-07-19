@@ -2,7 +2,7 @@
 exports.getDay=getDay; //module.exports=.exports
 module.exports.getDate= function() 
 {
-    const options = { day: 'numeric', month: 'long', weekday: 'long', year: 'numeric'};
+    const options = { day: 'numeric', month: 'long', weekday: 'long', year: 'numeric',timeZone: 'Asia/Kolkata'};
     var date=new Date();
     return date.toLocaleDateString('en-us',options);
 }

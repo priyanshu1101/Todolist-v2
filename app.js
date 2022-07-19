@@ -31,14 +31,13 @@ const list = mongoose.model("list", listSchema); //list-name of the collection
 
 
 // const port = 3000; //For local system
-const port=process.env.PORT; //For Heroku
+const port = process.env.PORT; //For Heroku
 
 
 app.get('/', function (req, res) {
-    const today = ""+date.getDate();
-    task.find({},function (err, data) {
-        if(!err)
-        {
+    const today = "" + date.getDate();
+    task.find({}, function (err, data) {
+        if (!err) {
             res.render('list', { list_heading: today, itemlist: data });
         }
     });
@@ -63,43 +62,43 @@ app.get('/', function (req, res) {
 // })
 
 app.get('/:listname', function (req, res) {
-    const today = ""+date.getDate();
-    if (req.params.listname == today) {
+    const today = "" + date.getDate();
+    if (req.params.listname.trim() != today.toLowerCase()) {
+        const listname = _.upperFirst(req.params.listname);
+        list.findOne({ listName: listname }, function (err, foundList) {
+            if (!err) {
+                if (foundList) {
+                    res.render('list', { list_heading: listname, itemlist: foundList.items });
+                }
+                else {
+                    res.render('list', { list_heading: listname, itemlist: [] })
+                }
+            }
+        });
+    }
+    else {
         res.redirect('/');
     }
-    const listname=_.lowerCase(req.params.listname);
-    list.findOne({ listName: listname }, function (err, foundList) {
-        if (!err) {
-            if (foundList) {
-                res.render('list', { list_heading: listname, itemlist: foundList.items });
-            }
-            else {
-                res.render('list', { list_heading: listname, itemlist: [] })
-            }
-        }
-    });
 })
 
 app.post('/:listname', function (req, res) {
-    const today = ""+date.getDate();
+    console.log(req.body);
+    const today = "" + date.getDate();
     var listname = req.params.listname;
     if (listname == today) {
         if (req.body.item.trim() != "") {
             const taskitem = new task({
                 task: req.body.item.trim()
             });
-            taskitem.save(function(err)
-            {
-                if(!err)
-                {
-                    console.log("Hello");
+            taskitem.save(function (err) {
+                if (!err) {
                     res.redirect("/");
                 }
             });
         }
     }
     else {
-        listname=_.lowerCase(listname);
+        listname = _.upperFirst(listname);
         const item = new task({
             task: req.body.item.trim()
         });
@@ -110,10 +109,8 @@ app.post('/:listname', function (req, res) {
                         listName: listname,
                         items: [item]
                     })
-                    listitem.save(function(err)
-                    {
-                        if(!err)
-                        {
+                    listitem.save(function (err) {
+                        if (!err) {
                             res.redirect('/' + listname);
                         }
                     });
@@ -127,49 +124,39 @@ app.post('/:listname', function (req, res) {
                 }
             }
         })
-        
+
     }
 })
 
 app.post('/delete/:listname', function (req, res) {
-    const today = ""+date.getDate();
+    const today = "" + date.getDate();
     if (req.params.listname == today) {
         task.deleteOne({ _id: req.body.task }, function (err) {
-            if (!err)
-            {
+            if (!err) {
                 res.redirect("/");
             }
         })
     }
     else {
-        const listname=_.lowerCase(req.params.listname);
-        list.updateOne({ listName: listname },{ $pull: { items: { _id: req.body.task } } },function(err,data)
-            {
-                if(!err)
-                {
-                list.findOne({listname: listname},function(err,data)
-                {
-                    if(data)
-                    {
-                        if(data.items.length==0)
-                        {
-                            list.deleteOne({listname:listname},function(err,data)
-                            {
-                                if(!err)
-                                {
-                                    res.redirect("/"+listname);
+        const listname = _.upperFirst(req.params.listname);
+        list.findOne({ listName: listname }, function (err, findData) {
+            if (!err) {
+                list.updateOne({ listName: listname }, { $pull: { items: { _id: req.body.task } } }, function (err, updateData) {
+                    if (!err) {
+                        if (findData.items.length == 1) {
+                            list.deleteOne({ listName: listname }, function (err, deleteData) {
+                                if (!err) {
+                                    res.redirect("/" + listname);
                                 }
                             })
                         }
-                        else
-                        {
-                            res.redirect("/"+listname);
+                        else {
+                            res.redirect("/" + listname);
                         }
                     }
                 })
             }
-            }
-        );
+        })
     }
 })
 

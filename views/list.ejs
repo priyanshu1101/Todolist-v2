@@ -1,26 +1,30 @@
 <%- include("header") -%>
 
-<body>
+    <body>
 
-    <div class="box" id="heading">
-        <h1><%= list_heading %></h1>
-        <!-- <form action="">
+        <div class="box" id="heading">
+            <h1 class="taskheading" contenteditable="true" spellcheck="false">
+                <%= list_heading %>
+            </h1>
+            <!-- <form action="">
         <input type="text" style="font-color: white;" placeholder=<%= list_heading %>
         </form> -->
-    </div>
-    
-    <div class="box">
-        <% itemlist.forEach(function(item){ %>
-        <form action="/delete/<%= list_heading %>" method="post">
-            <div class="item">
-                <input type="checkbox" name="task" value=<%= item._id %> onchange="this.form.submit()">
-                <p><%= item.task %></p> 
-            </div>
-            <!-- <input type="hidden" name="listname" value="item.listname">   This can be used to provide multiple values to the body -->
-        </form>
-        <% }); %>
+        </div>
 
-        <!-- <% for(var i=0;i<itemlist.length;i++){ %>
+        <div class="box">
+            <% itemlist.forEach(function(item){ %>
+                <form action="/delete/<%= list_heading %>" method="post">
+                    <div class="item">
+                        <input type="checkbox" name="task" value=<%=item._id %> onchange="this.form.submit()">
+                        <p>
+                            <%= item.task %>
+                        </p>
+                    </div>
+                    <!-- <input type="hidden" name="listname" value="item.listname">   This can be used to provide multiple values to the body -->
+                </form>
+                <% }); %>
+
+                    <!-- <% for(var i=0;i<itemlist.length;i++){ %>
             <div class="item">
                 <input type="checkbox">
                 <p><%= itemlist[i].task %></p> 
@@ -28,13 +32,13 @@
         <% } %> -->
 
 
-        <form class="item" action="/<%= list_heading %>" method="post">
-            <input type="text" name="item" placeholder="New Item" autocomplete="off">
-            <button type="submit" name="list" value=<%= list_heading %>>+</button>
-        </form>
-    </div>
-        
-    
-</body>
+                    <form class="item" action="/<%= list_heading %>" method="post">
+                        <input type="text" name="item" placeholder="New Item" autocomplete="off">
+                        <button type="submit" name="list" value=<%=list_heading %>>+</button>
+                    </form>
+        </div>
 
-<%- include("footer") -%>
+        <script src="Javascript/heading.js"></script>
+    </body>
+
+    <%- include("footer") -%>
